@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Disciplinas Disponibles')
 @section('page-title', 'Disciplinas Deportivas y Culturales')

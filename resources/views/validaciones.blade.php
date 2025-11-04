@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Validación de Inscripciones')
 @section('page-title', 'Validación de Inscripciones')

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Gestión de Documentos')
 @section('page-title', 'Gestión de Documentos')

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Reportes y Estadísticas')
 @section('page-title', 'Reportes y Estadísticas')
@@ -10,7 +10,7 @@
     <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-6">Generar Reporte</h2>
         
-        <form action="#" method="GET" class="space-y-6">
+        <form id="form-reportes" action="#" method="GET" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Tipo de Reporte -->
                 <div>
@@ -312,7 +312,7 @@
 
 <script>
     // Simular generación de reporte
-    document.querySelector('form').addEventListener('submit', function(e) {
+    document.querySelector('#form-reportes').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const tipoReporte = document.getElementById('tipo_reporte').value;

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Configuración del Sistema')
 @section('page-title', 'Configuración del Sistema')

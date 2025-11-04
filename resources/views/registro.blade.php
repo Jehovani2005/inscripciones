@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
 @section('title', 'Registro de Participante')
 @section('page-title', 'Registro de Participante')
