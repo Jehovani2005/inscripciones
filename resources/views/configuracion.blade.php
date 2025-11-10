@@ -47,7 +47,7 @@
         </div>
 
         <!-- Configuración de Notificaciones -->
-        <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
+        {{-- <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-6">Configuración de Notificaciones</h2>
             
             <div class="space-y-4">
@@ -87,10 +87,10 @@ Saludos cordiales,
 Comité Organizador</textarea>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Configuración de Seguridad -->
-        <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
+        {{-- <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-6">Configuración de Seguridad</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -116,10 +116,10 @@ Comité Organizador</textarea>
                     <span class="ml-2 text-sm text-gray-700">Requerir verificación en dos pasos para administradores</span>
                 </label>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Configuración de Documentos -->
-        <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
+        {{-- <div class="card bg-white rounded-xl shadow-sm p-6 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-6">Configuración de Documentos</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -138,7 +138,7 @@ Comité Organizador</textarea>
                     <p class="text-xs text-gray-500 mt-1">Separar con comas</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
@@ -152,7 +152,7 @@ Comité Organizador</textarea>
     </form>
 
     <!-- Acciones Peligrosas -->
-    <div class="card bg-white rounded-xl shadow-sm p-6 mt-6 border border-red-200">
+    {{-- <div class="card bg-white rounded-xl shadow-sm p-6 mt-6 border border-red-200">
         <h2 class="text-xl font-semibold text-red-800 mb-6">Zona de Peligro</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -174,7 +174,7 @@ Comité Organizador</textarea>
                 </button>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 <script>

@@ -127,7 +127,7 @@
     </div>
 
     <!-- Gráficos y tablas -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    {{-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Inscritos por disciplina -->
         <div class="card bg-white rounded-xl shadow-sm p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-6">Inscritos por Disciplina</h3>
@@ -240,10 +240,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Reportes predefinidos -->
-    <div class="card bg-white rounded-xl shadow-sm p-6">
+    {{-- <div class="card bg-white rounded-xl shadow-sm p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-6">Reportes Predefinidos</h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -307,7 +307,7 @@
                 </div>
             </a>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 <script>

@@ -2,13 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ParticipanteController;
+use App\Http\Controllers\DisciplinaController;
+use App\Http\Controllers\ParticipanteOfertaController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/dashboard', function () {
     if (Auth::check() && Auth::user()->rol === 'Administrador') {
         return view('validaciones');
     }
     if (Auth::check() && Auth::user()->rol === 'Participante') {
-        return view('registro');
+        return view('participantes.create');
     }
     if (Auth::check() && Auth::user()->rol === 'Supervisor') {
         return view('reportes');
@@ -20,7 +24,7 @@ Route::get('/', function () {
         return view('validaciones');
     }
     if (Auth::check() && Auth::user()->rol === 'Participante') {
-        return view('registro');
+        return view('participantes.create');
     }
     if (Auth::check() && Auth::user()->rol === 'Supervisor') {
         return view('reportes');
@@ -34,13 +38,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    Route::get('/registro', function () {
-        return view('registro');
-    });
+    Route::get('/registro_participante', [ParticipanteController::class, 'create'])->name('participantes.create');
+    Route::post('/participantes', [ParticipanteController::class, 'store'])->name('participantes.store');
 
-    Route::get('/disciplinas', function () {
-        return view('disciplinas');
-    });
+    // Route::get('/registro', function () {
+    //     return view('registro');
+    // });
+
+    // Route::get('/disciplinas', function () {
+    //     return view('disciplinas');
+    // });
 
     Route::get('/documentos', function () {
         return view('documentos');
@@ -57,6 +64,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/configuracion', function () {
         return view('configuracion');
     });
+
+    Route::get('/disciplinas', [DisciplinaController::class, 'index'])->name('disciplinas.index');
+    Route::post('/disciplinas/seleccionar', [DisciplinaController::class, 'seleccionar'])->name('disciplinas.seleccionar');
+    Route::post('/disciplinas/deseleccionar', [DisciplinaController::class, 'deseleccionar'])->name('disciplinas.deseleccionar');
+    
+    Route::post('/disciplinas/seleccionar', [ParticipanteOfertaController::class, 'seleccionar'])->name('disciplinas.seleccionar');
+    Route::post('/disciplinas/eliminar', [ParticipanteOfertaController::class, 'eliminar'])->name('disciplinas.eliminar');
 
 
 

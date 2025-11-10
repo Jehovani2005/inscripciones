@@ -151,12 +151,12 @@
                         <span>Dashboard</span>
                     </a> --}}
 
-                    <a href="{{ url('/registro') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
+                    <a href="{{ route('participantes.create') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
                         <i class="fas fa-user-plus mr-3 text-green-500"></i>
                         <span>Registro</span>
                     </a>
 
-                    <a href="{{ url('/disciplinas') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
+                    <a href="{{ route('disciplinas.index') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
                         <i class="fas fa-running mr-3 text-purple-500"></i>
                         <span>Disciplinas</span>
                     </a>
