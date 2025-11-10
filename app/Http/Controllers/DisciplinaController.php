@@ -36,7 +36,7 @@ class DisciplinaController extends Controller
                 ->toArray();
         }
 
-        return view('disciplinas', [
+        return view('disciplinas.index', [
             'participante' => $participante,
             'ofertas' => $ofertas,
             'selecciones' => $selecciones,
@@ -46,71 +46,67 @@ class DisciplinaController extends Controller
     public function seleccionar(Request $request)
     {
         $request->validate([
-            'oferta_id' => 'required|integer|exists:ofertas_disciplinas,id',
+            'oferta_id' => 'required|integer|exists:ofertas_disciplinas,id'
         ]);
 
         $usuario = Auth::user();
         $participante = Participante::where('user_id', $usuario->id)->whereNull('deleted_at')->first();
 
         if (!$participante) {
-            return response()->json(['mensaje' => 'Debes registrarte antes de seleccionar disciplinas.'], 422);
+            return response()->json(['mensaje' => 'Debes registrarte primero.'], 422);
         }
-
-        $ofertaId = (int) $request->oferta_id;
 
         DB::beginTransaction();
         try {
-            // Bloqueamos la fila de la oferta
-            $oferta = OfertaDisciplina::where('id', $ofertaId)->lockForUpdate()->firstOrFail();
-
+            $oferta = OfertaDisciplina::where('id', $request->oferta_id)->lockForUpdate()->first();
             $hoy = Carbon::today();
+
             if ($hoy->lt(Carbon::parse($oferta->inicio_inscripcion)) || $hoy->gt(Carbon::parse($oferta->fin_inscripcion))) {
                 DB::rollBack();
-                return response()->json(['mensaje' => 'El periodo de inscripción para esta oferta está cerrado.'], 422);
+                return response()->json(['mensaje' => 'La inscripción para esta disciplina no está disponible.'], 422);
             }
 
-            // Contar inscripciones activas en esta oferta
-            $ocupados = ParticipanteOferta::where('oferta_disciplina_id', $oferta->id)->whereNull('deleted_at')->count();
+            $ocupados = ParticipanteOferta::where('oferta_disciplina_id', $oferta->id)
+                ->where('estado', 'aprobada')
+                ->count();
 
             if ($ocupados >= $oferta->capacidad) {
                 DB::rollBack();
-                return response()->json(['mensaje' => 'Ya no hay cupos disponibles en esta oferta.'], 422);
+                return response()->json(['mensaje' => 'No hay cupos disponibles.'], 422);
             }
 
-            // Verificar que el participante no esté ya inscrito en esta oferta
-            $ya = ParticipanteOferta::where('participante_id', $participante->id)
+            $yaSolicitada = ParticipanteOferta::where('participante_id', $participante->id)
                 ->where('oferta_disciplina_id', $oferta->id)
-                ->whereNull('deleted_at')
                 ->exists();
-            if ($ya) {
+
+            if ($yaSolicitada) {
                 DB::rollBack();
-                return response()->json(['mensaje' => 'Ya estás inscrito en esta disciplina.'], 422);
+                return response()->json(['mensaje' => 'Ya solicitaste esta disciplina. Espera la respuesta del comité.'], 422);
             }
 
-            // Verificar límite de 2 disciplinas por participante
-            $contador = ParticipanteOferta::where('participante_id', $participante->id)
+            $totalSolicitadas = ParticipanteOferta::where('participante_id', $participante->id)
                 ->whereNull('deleted_at')
                 ->count();
-            if ($contador >= 2) {
+
+            if ($totalSolicitadas >= 2) {
                 DB::rollBack();
-                return response()->json(['mensaje' => 'Solo puedes seleccionar hasta 2 disciplinas.'], 422);
+                return response()->json(['mensaje' => 'Solo puedes solicitar hasta 2 disciplinas.'], 422);
             }
 
-            // Crear inscripción
             ParticipanteOferta::create([
                 'participante_id' => $participante->id,
                 'oferta_disciplina_id' => $oferta->id,
+                'estado' => 'pendiente'
             ]);
 
             DB::commit();
-
-            return response()->json(['mensaje' => 'Inscripción realizada con éxito.', 'oferta_id' => $oferta->id]);
+            return response()->json(['mensaje' => 'Solicitud enviada correctamente. Espera la validación del comité.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al seleccionar oferta: ' . $e->getMessage());
-            return response()->json(['mensaje' => 'Ocurrió un error interno. Intenta de nuevo.'], 500);
+            return response()->json(['mensaje' => 'Error interno: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function deseleccionar(Request $request)
     {

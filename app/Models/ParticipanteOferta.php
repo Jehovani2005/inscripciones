@@ -10,7 +10,12 @@ class ParticipanteOferta extends Model
     use SoftDeletes;
 
     protected $table = 'participante_oferta';
-    protected $fillable = ['participante_id', 'oferta_disciplina_id'];
+    protected $fillable = [
+        'participante_id',
+        'oferta_disciplina_id',
+        'estado',
+        'motivo_rechazo'
+    ];
 
     public function oferta()
     {

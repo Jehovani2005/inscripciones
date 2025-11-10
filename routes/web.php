@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParticipanteController;
 use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\ParticipanteOfertaController;
+use App\Http\Controllers\ValidacionController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/dashboard', function () {
@@ -68,11 +69,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/disciplinas', [DisciplinaController::class, 'index'])->name('disciplinas.index');
     Route::post('/disciplinas/seleccionar', [DisciplinaController::class, 'seleccionar'])->name('disciplinas.seleccionar');
     Route::post('/disciplinas/deseleccionar', [DisciplinaController::class, 'deseleccionar'])->name('disciplinas.deseleccionar');
-    
+
     Route::post('/disciplinas/seleccionar', [ParticipanteOfertaController::class, 'seleccionar'])->name('disciplinas.seleccionar');
     Route::post('/disciplinas/eliminar', [ParticipanteOfertaController::class, 'eliminar'])->name('disciplinas.eliminar');
 
 
+    Route::get('/validaciones', [ValidacionController::class, 'index'])->name('validaciones.index');
+    Route::get('/validaciones/documentos/{id}', [ValidacionController::class, 'documentos'])->name('validaciones.documentos');
+    Route::post('/validaciones/aprobar/{id}', [ValidacionController::class, 'aprobar'])->name('validaciones.aprobar');
+    Route::post('/validaciones/rechazar/{id}', [ValidacionController::class, 'rechazar'])->name('validaciones.rechazar');
 
 });
 

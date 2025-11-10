@@ -21,7 +21,13 @@ class OfertaDisciplina extends Model
 
     public function cuposDisponibles()
     {
-        $ocupados = $this->inscripciones()->whereNull('deleted_at')->count();
+        // Contar solo las inscripciones aprobadas
+        $ocupados = $this->inscripciones()
+            ->where('estado', 'aprobada')
+            ->whereNull('deleted_at')
+            ->count();
+
         return max(0, $this->capacidad - $ocupados);
     }
+
 }
