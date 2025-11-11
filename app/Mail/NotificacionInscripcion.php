@@ -19,7 +19,7 @@ class NotificacionInscripcion extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($titulo, $mensaje)
     {
         $this->titulo = $titulo;
         $this->mensaje = $mensaje;
@@ -32,28 +32,29 @@ class NotificacionInscripcion extends Mailable
     public function build()
     {
         return $this->subject($this->titulo)
-                    ->view('email.notificacion');
+                    ->view('email.notificacion')
+                    ->with(['mensaje' => $this->mensaje]);
     }
 
     /**
      * Get the message envelope.
      */
-    public function envelope(): Envelope
+    /*public function envelope(): Envelope
     {
         return new Envelope(
             subject: 'Notificacion Inscripcion',
         );
-    }
+    }*/
 
     /**
      * Get the message content definition.
      */
-    public function content(): Content
+    /*public function content(): Content
     {
         return new Content(
             view: 'view.name',
         );
-    }
+    }*/
 
     /**
      * Get the attachments for the message.
