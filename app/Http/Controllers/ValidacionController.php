@@ -8,6 +8,8 @@ use App\Models\ParticipanteOferta;
 use App\Models\OfertaDisciplina;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Mail\NotificacionInscripcion;
+use Illuminate\Support\Facades\Mail;
 
 class ValidacionController extends Controller
 {
@@ -77,6 +79,14 @@ class ValidacionController extends Controller
 
             DB::commit();
 
+            // Enviar correo al participante
+            if ($solicitud->usuario && $solicitud->usuario->email) {
+                $correo = $solicitud->usuario->email;
+                $titulo = 'Inscripción Aprobada';
+                $mensaje = 'Tu inscripción en la disciplina "' . $oferta->nombre . '" ha sido aprobada. ¡Felicidades!';
+                Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+            }
+
             return response()->json([
                 'mensaje' => '✅ Inscripción aprobada correctamente. Cupos restantes: ' . ($cupos - 1)
             ]);
@@ -96,6 +106,15 @@ class ValidacionController extends Controller
             'estado' => 'rechazada',
             'motivo_rechazo' => $motivo
         ]);
+
+        // Enviar correo al participante
+        if ($solicitud->usuario && $solicitud->usuario->email) {
+            $correo = $solicitud->usuario->email;
+            $titulo = 'Inscripción Rechazada';
+            $mensaje = 'Tu inscripción ha sido rechazada. Motivo: ' . $motivo;
+            Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+        }
+
 
         return response()->json([
             'mensaje' => '❌ La inscripción fue rechazada. Motivo: ' . $motivo
