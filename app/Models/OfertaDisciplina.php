@@ -19,6 +19,11 @@ class OfertaDisciplina extends Model
         return $this->hasMany(ParticipanteOferta::class, 'oferta_disciplina_id');
     }
 
+    public function participantesOferta()
+    {
+        return $this->hasMany(ParticipanteOferta::class, 'oferta_disciplina_id');
+    }
+
     public function cuposDisponibles()
     {
         // Contar solo las inscripciones aprobadas

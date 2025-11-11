@@ -12,27 +12,27 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/dashboard', function () {
     if (Auth::check() && Auth::user()->rol === 'Administrador') {
-        return redirect()->route('validaciones.index');
+        return view('validaciones');
     }
     if (Auth::check() && Auth::user()->rol === 'Participante') {
-        return redirect()->route('participantes.create');
+        return view('participantes.create');
     }
     if (Auth::check() && Auth::user()->rol === 'Supervisor') {
-        return redirect()->route('reportes.index');
+        return view('reportes');
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/', function () {
     if (Auth::check() && Auth::user()->rol === 'Administrador') {
-        return redirect()->route('validaciones.index');
+        return view('validaciones');
     }
     if (Auth::check() && Auth::user()->rol === 'Participante') {
-        return redirect()->route('participantes.create');
+        return view('participantes.create');
     }
     if (Auth::check() && Auth::user()->rol === 'Supervisor') {
-        return redirect()->route('reportes.index');
+        return view('reportes');
     }
-    return redirect('/login');
+    return redirect('/login'); // Muestra la página de inicio si no está autenticado
 })->name('inicio');
 
 Route::middleware('auth')->group(function () {
@@ -82,7 +82,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/validaciones/rechazar/{id}', [ValidacionController::class, 'rechazar'])->name('validaciones.rechazar');
 
     Route::get('/ofertas', [OfertaDisciplinaController::class, 'index'])->name('ofertas.index');
-    Route::post('/ofertas', [OfertaDisciplinaController::class, 'store'])->name('ofertas.store');
     Route::put('/ofertas/{id}', [OfertaDisciplinaController::class, 'update'])->name('ofertas.update');
     Route::delete('/ofertas/{id}', [OfertaDisciplinaController::class, 'destroy'])->name('ofertas.destroy');
 

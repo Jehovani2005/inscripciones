@@ -50,16 +50,18 @@ class ParticipanteController extends Controller
     {
         // Validación
         $validated = $request->validate([
-            'numero_trabajador'    => 'required|string|max:50',
-            'curp'                 => 'required|string|max:25',
+            'numero_trabajador'    => 'required|string|max:50|'.Rule::unique('participantes', 'numero_trabajador')->whereNull('deleted_at'),
+            'curp'                 => 'required|string|max:25|'.Rule::unique('participantes', 'curp')->whereNull('deleted_at'),
             'nombre_completo'      => 'required|string|max:255',
             'fecha_nacimiento'     => 'required|date',
             'antiguedad'           => 'required|integer|min:0|max:50',
-            'fotografia'           => 'required|file|mimes:jpg,jpeg,png|image|max:5120', // 5MB
+            'fotografia'           => 'required|file|mimes:jpg,jpeg,png|max:5120', // 5MB
             'constancia_laboral'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'comprobante_pago'     => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], [
             // Mensajes personalizados opcionales en español
+            'numero_trabajador.unique' => 'El número de trabajador ya está registrado.',
+            'curp.unique' => 'La CURP ya está registrada.',
             'fotografia.mimes' => 'La fotografía debe ser JPG o PNG.',
             'constancia_laboral.mimes' => 'La constancia debe ser PDF/JPG/PNG.',
             'comprobante_pago.mimes' => 'El comprobante debe ser PDF/JPG/PNG.',

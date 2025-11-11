@@ -164,10 +164,10 @@
                             <span>Disciplinas</span>
                         </a>
 
-                        <a href="{{ url('/documentos') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
+                        {{-- <a href="{{ url('/documentos') }}" class="nav-link flex items-center px-4 py-3 text-gray-700 ">
                             <i class="fas fa-file-upload mr-3 text-yellow-500"></i>
                             <span>Documentos</span>
-                        </a>
+                        </a> --}}
                     @endif
 
                     @auth
@@ -180,14 +180,14 @@
                         @endif
 
                         @if (Auth::user()->rol === 'Administrador')
-                            <a href="{{ url('/validaciones') }}" class="nav-link flex items-center px-4 py-3 text-gray-700">
+                            <a href="{{ route('validaciones.index') }}" class="nav-link flex items-center px-4 py-3 text-gray-700">
                                 <i class="fas fa-users-cog mr-3 text-indigo-500"></i>
                                 <span>Validaciones</span>
                             </a>
 
-                            <a href="{{ url('/configuracion') }}" class="nav-link flex items-center px-4 py-3 text-gray-700">
+                            <a href="{{ route('ofertas.index') }}" class="nav-link flex items-center px-4 py-3 text-gray-700">
                                 <i class="fas fa-cog mr-3 text-gray-500"></i>
-                                <span>Configuración</span>
+                                <span>Gestión de Ofertas</span>
                             </a>
                         @endif
 
@@ -273,7 +273,7 @@
 
                                     <!-- Opciones del menú -->
                                     <div class="py-1">
-                                        <a href="#"
+                                        {{-- <a href="#"
                                             class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             <i class="fas fa-user-circle mr-3 text-gray-500"></i>
                                             Mi Perfil
@@ -283,7 +283,7 @@
                                             <i class="fas fa-cog mr-3 text-gray-500"></i>
                                             Configuración
                                         </a>
-                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <div class="border-t border-gray-100 my-1"></div> --}}
 
                                         {{-- Botón de Cerrar Sesión --}}
                                         <form method="POST" action="{{ route('logout') }}" class="w-full">

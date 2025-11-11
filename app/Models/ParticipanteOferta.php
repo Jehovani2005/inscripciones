@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ParticipanteOferta extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = 'participante_oferta';
     protected $fillable = [
@@ -26,4 +26,16 @@ class ParticipanteOferta extends Model
     {
         return $this->belongsTo(Participante::class, 'participante_id');
     }
+
+    public function usuario()
+{
+    return $this->hasOneThrough(
+        User::class,
+        Participante::class,
+        'id', // Foreign key on Participante table
+        'id', // Foreign key on User table
+        'participante_id', // Local key on ParticipanteOferta table
+        'user_id' // Local key on Participante table
+    );
+}
 }

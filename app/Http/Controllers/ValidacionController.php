@@ -44,26 +44,23 @@ class ValidacionController extends Controller
         return view('validaciones.index', compact('solicitudes'));
     }
 
-    // ✅ Aprobar solicitud
+    // ✅ Aprobar solicitud - CORREGIDO
     public function aprobar($id)
     {
         DB::beginTransaction();
 
         try {
-            // Bloquear el registro para evitar condiciones de carrera
-            $solicitud = ParticipanteOferta::with('oferta')
-                ->lockForUpdate()
-                ->findOrFail($id);
+            // Cargar todas las relaciones necesarias
+            $solicitud = ParticipanteOferta::with([
+                'oferta.disciplina', 
+                'participante.user'
+            ])->lockForUpdate()->findOrFail($id);
 
             $oferta = $solicitud->oferta;
-
-            // Recalcular cupos disponibles solo con inscripciones aprobadas
             $cupos = $oferta->cuposDisponibles();
 
             if ($cupos <= 0) {
                 DB::rollBack();
-
-                // Eliminar la solicitud del participante porque ya no hay lugar
                 $solicitud->delete();
 
                 return response()->json([
@@ -71,7 +68,6 @@ class ValidacionController extends Controller
                 ]);
             }
 
-            // Aprobar inscripción
             $solicitud->update([
                 'estado' => 'aprobada',
                 'motivo_rechazo' => ''
@@ -79,46 +75,88 @@ class ValidacionController extends Controller
 
             DB::commit();
 
-            // Enviar correo al participante
-            if ($solicitud->usuario && $solicitud->usuario->email) {
-                $correo = $solicitud->usuario->email;
-                $titulo = 'Inscripción Aprobada';
-                $mensaje = 'Tu inscripción en la disciplina "' . $oferta->nombre . '" ha sido aprobada. ¡Felicidades!';
-                Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+            // ENVÍO DE CORREO MEJORADO
+            try {
+                if ($solicitud->participante && $solicitud->participante->user) {
+                    $correo = $solicitud->participante->user->email;
+                    $titulo = 'Inscripción Aprobada';
+                    
+                    // Obtener el nombre de la disciplina correctamente
+                    $nombreDisciplina = $oferta->disciplina ? $oferta->disciplina->nombre : 
+                                    ($oferta->nombre ?? 'Disciplina no especificada');
+                    
+                    $mensaje = 'Tu inscripción en la disciplina "' . $nombreDisciplina . '" ha sido aprobada. ¡Felicidades!';
+                    
+                    Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+                    
+                    \Log::info('Correo enviado exitosamente a: ' . $correo);
+                    \Log::info('Disciplina en correo: ' . $nombreDisciplina);
+                } else {
+                    \Log::warning('No se pudo encontrar el usuario o email para la solicitud: ' . $id);
+                }
+            } catch (\Exception $emailException) {
+                \Log::error('Error al enviar correo: ' . $emailException->getMessage());
             }
 
             return response()->json([
                 'mensaje' => '✅ Inscripción aprobada correctamente. Cupos restantes: ' . ($cupos - 1)
             ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Error al aprobar solicitud: ' . $e->getMessage());
             return response()->json(['mensaje' => 'Error al aprobar: ' . $e->getMessage()], 500);
         }
     }
 
-    // ❌ Rechazar solicitud con motivo y que disciplina
+    // ❌ Rechazar solicitud - CORREGIDO
     public function rechazar(Request $request, $id)
     {
-        $solicitud = ParticipanteOferta::findOrFail($id);
-        $motivo = $request->motivo ?? 'Sin especificar';
+        try {
+            $solicitud = ParticipanteOferta::with([
+                'oferta.disciplina', 
+                'participante.user'
+            ])->findOrFail($id);
+            
+            $motivo = $request->motivo ?? 'Sin especificar';
 
-        $solicitud->update([
-            'estado' => 'rechazada',
-            'motivo_rechazo' => $motivo
-        ]);
+            $solicitud->update([
+                'estado' => 'rechazada',
+                'motivo_rechazo' => $motivo
+            ]);
 
-        // Enviar correo al participante
-        if ($solicitud->usuario && $solicitud->usuario->email) {
-            $correo = $solicitud->usuario->email;
-            $titulo = 'Inscripción Rechazada';
-            $mensaje = 'Tu inscripción ha sido rechazada. Motivo: ' . $motivo;
-            Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+            // ENVÍO DE CORREO MEJORADO
+            try {
+                if ($solicitud->participante && $solicitud->participante->user) {
+                    $correo = $solicitud->participante->user->email;
+                    $titulo = 'Inscripción Rechazada';
+                    
+                    // Obtener el nombre de la disciplina correctamente
+                    $nombreDisciplina = $solicitud->oferta->disciplina ? 
+                                    $solicitud->oferta->disciplina->nombre : 
+                                    ($solicitud->oferta->nombre ?? 'Disciplina no especificada');
+                    
+                    $mensaje = 'Tu inscripción en la disciplina "' . $nombreDisciplina . '" ha sido rechazada. Motivo: ' . $motivo;
+                    
+                    Mail::to($correo)->send(new NotificacionInscripcion($titulo, $mensaje));
+                    
+                    \Log::info('Correo de rechazo enviado a: ' . $correo);
+                    \Log::info('Disciplina en correo rechazo: ' . $nombreDisciplina);
+                } else {
+                    \Log::warning('No se pudo encontrar el usuario o email para la solicitud rechazada: ' . $id);
+                }
+            } catch (\Exception $emailException) {
+                \Log::error('Error al enviar correo de rechazo: ' . $emailException->getMessage());
+            }
+
+            return response()->json([
+                'mensaje' => '❌ La inscripción fue rechazada. Motivo: ' . $motivo
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al rechazar solicitud: ' . $e->getMessage());
+            return response()->json(['mensaje' => 'Error al rechazar: ' . $e->getMessage()], 500);
         }
-
-
-        return response()->json([
-            'mensaje' => '❌ La inscripción fue rechazada. Motivo: ' . $motivo
-        ]);
     }
 
     // 📄 Ver documentos
