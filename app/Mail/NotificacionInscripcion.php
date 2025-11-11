@@ -32,7 +32,7 @@ class NotificacionInscripcion extends Mailable
     public function build()
     {
         return $this->subject($this->titulo)
-                    ->view('emails.notificacion');
+                    ->view('email.notificacion');
     }
 
     /**
